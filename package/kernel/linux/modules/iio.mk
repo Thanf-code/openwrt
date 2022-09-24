@@ -78,6 +78,21 @@ endef
 
 $(eval $(call KernelPackage,iio-ad799x))
 
+define KernelPackage/iio-ads1015
+  SUBMENU:=$(IIO_MENU)
+  DEPENDS:=+kmod-i2c-core +kmod-iio-core +kmod-regmap-i2c +kmod-industrialio-triggered-buffer
+  TITLE:=Texas Instruments ADS1015 ADC driver
+  KCONFIG:= CONFIG_TI_ADS1015
+  FILES:=$(LINUX_DIR)/drivers/iio/adc/ti-ads1015.ko
+  AUTOLOAD:=$(call AutoLoad,56,ti-ads1015)
+endef
+
+define KernelPackage/iio-ads1015/description
+ This driver adds support for Texas Instruments ADS1015 and ADS1115 ADCs.
+endef
+
+$(eval $(call KernelPackage,iio-ads1015))
+
 define KernelPackage/iio-hmc5843
   SUBMENU:=$(IIO_MENU)
   DEPENDS:=+kmod-i2c-core +kmod-iio-core +kmod-regmap-i2c +kmod-industrialio-triggered-buffer
@@ -416,9 +431,13 @@ define KernelPackage/iio-sps30
   SUBMENU:=$(IIO_MENU)
   DEPENDS:=+kmod-i2c-core +kmod-iio-core +kmod-industrialio-triggered-buffer +kmod-lib-crc8
   TITLE:=Sensirion SPS30 particulate matter sensor
-  KCONFIG:=CONFIG_SPS30
-  FILES:=$(LINUX_DIR)/drivers/iio/chemical/sps30.ko
-  AUTOLOAD:=$(call AutoProbe,sps30)
+  KCONFIG:= \
+	CONFIG_SPS30 \
+	CONFIG_SPS30_I2C
+  FILES:= \
+	$(LINUX_DIR)/drivers/iio/chemical/sps30.ko \
+	$(LINUX_DIR)/drivers/iio/chemical/sps30_i2c.ko@ge5.14
+  AUTOLOAD:=$(call AutoProbe,sps30 sps30_i2c)
 endef
 
 define KernelPackage/iio-sps30/description
